@@ -4,6 +4,8 @@ class ApiController < ApplicationController
   end
 
   def invoice
-    render text: 'OK'
+    invoice = Invoice.new
+    send_data invoice.pdf_data, type: 'application/pdf',
+      disposition: "attachment; filename=#{invoice.filename}"
   end
 end
