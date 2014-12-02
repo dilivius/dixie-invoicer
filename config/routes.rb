@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
   namespace :api do
-    get :invoice
+    post :invoice
   end
 end

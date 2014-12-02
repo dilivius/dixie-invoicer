@@ -1,7 +1,8 @@
 require "prawn"
 
 class Invoice
-  def initialize
+  def initialize(job)
+    @job = job
     @file = Tempfile.new('invoice')
     generate
   end
@@ -12,7 +13,7 @@ class Invoice
   end
 
   def filename
-    'invoice.pdf'
+    "invoice-#{@job['common_id']}.pdf"
   end
 
   private
