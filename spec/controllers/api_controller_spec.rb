@@ -4,7 +4,7 @@ RSpec.describe ApiController, type: :controller do
   describe 'invoice' do
     it 'should return the PDF invoice file with proper name' do
       make_session_active
-      post :invoice, {common_id: 'abcd'}.to_json
+      post :invoice, job: {common_id: 'abcd'}.to_json
       expect(response).to be_ok
       expect(response.body[0..7]).to eq("%PDF-1.3")
       expect(response.headers["Content-Type"]).to eq("application/pdf")
@@ -13,7 +13,7 @@ RSpec.describe ApiController, type: :controller do
 
     it "should not allow to be used by normal users" do
       make_session_active("user")
-      post :invoice, '{}'
+      post :invoice, job: {common_id: 'abcd'}.to_json
       expect(response.status).to eq(401)
       expect(response.body).to be_blank
     end

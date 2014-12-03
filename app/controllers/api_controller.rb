@@ -6,7 +6,7 @@ class ApiController < ApplicationController
   end
 
   def invoice
-    invoice = Invoice.new(JSON.parse(request.body.read))
+    invoice = Invoice.new(JSON.parse(params[:job]))
     send_data invoice.pdf_data, type: 'application/pdf',
       disposition: "attachment; filename=#{invoice.filename}"
   end
