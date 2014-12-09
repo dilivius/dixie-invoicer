@@ -1,7 +1,8 @@
 require 'rails_helper'
 
 describe ExcelInventory, type: :model do
-  # Excel files are loaded in an initializer, so we can just test the results.
+  # Excel files are loaded into rspec through a rake task, so we can just test
+  # the results here.
   describe '.load' do
     let(:pricing) { Pricing.new }
 

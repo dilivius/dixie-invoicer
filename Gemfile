@@ -10,6 +10,7 @@ gem 'coffee-rails', '~> 4.1.0'
 gem 'jquery-rails'
 gem 'prawn'
 gem 'rubyXL'
+gem 'redis'
 
 group :development, :test do
   gem 'quiet_assets'
