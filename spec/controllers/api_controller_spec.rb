@@ -6,14 +6,14 @@ RSpec.describe ApiController, type: :controller do
       make_session_active
       post :invoice, job: {common_id: 'abcd'}.to_json
       expect(response).to be_ok
-      expect(response.body[0..7]).to eq("%PDF-1.3")
+      expect(response.body[0..7]).to eq("%PDF-1.4")
       expect(response.headers["Content-Type"]).to eq("application/pdf")
       expect(response.headers["Content-Disposition"]).to eq("attachment; filename=invoice-abcd.pdf")
     end
 
     it "should not allow to be used by normal users" do
       make_session_active("user")
-      post :invoice, job: {common_id: 'abcd'}.to_json
+      post :invoice, job: {common_id: 'abcd', performed_at: 1234567890000, company_name: 'Chevron'}.to_json
       expect(response.status).to eq(401)
       expect(response.body).to be_blank
     end
