@@ -21,10 +21,10 @@ describe ExcelInventory, type: :model do
     end
 
     it 'should correctly load standard Hobbs pricing file into the Pricing model' do
-      # first row in the standard Hobbs pricing file
-      expect(pricing.get('1280BT', 'Hobbs', 'WESTEX')).to eq(108.60)
-       # last row in the standard Hobbs pricing file
-      expect(pricing.get('WR300', 'Hobbs', 'WESTEX')).to eq(2.14)
+      # first row with a define major price in the standard Hobbs pricing file
+      expect(pricing.get('LIG165', 'Hobbs', 'WESTEX')).to eq(102.85)
+       # last row with a defined major price in the standard Hobbs pricing file
+      expect(pricing.get('CLA516', 'Hobbs', 'WESTEX')).to eq(3.51)
     end
 
     it 'should correctly load corporate Hobbs pricing file into the Pricing model' do

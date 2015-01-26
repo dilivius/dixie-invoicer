@@ -1,3 +1,5 @@
+require 'csv'
+
 class ExcelInventory
   def initialize(pricing)
     @pricing = pricing
@@ -16,7 +18,7 @@ class ExcelInventory
   end
 
   def load_hobbs_pricing
-    load_branch_pricing("data/Hobbs Price List.xlsx", "Hobbs", 10)
+    load_branch_pricing("data/Hobbs Items with Pricing Columns and Major Pricing.csv", "Hobbs", 14)
     load_corporate_pricing("data/Hobbs Contract Pricing.xlsx", "Hobbs", 7)
   end
 
@@ -42,7 +44,21 @@ class ExcelInventory
   end
 
   def extract_data(file)
+    if file.end_with?(".xlsx")
+      extract_xlsx(file)
+    elsif file.end_with?(".csv")
+      extract_csv(file)
+    else
+      raise ArgumentError.new("Unknown file type: #{file}")
+    end
+  end
+
+  def extract_xlsx(file)
     tiered = RubyXL::Parser.parse(file)
     tiered.worksheets.first.extract_data[1..-1]
+  end
+
+  def extract_csv(file)
+    CSV.read(file)[1..-1]
   end
 end
