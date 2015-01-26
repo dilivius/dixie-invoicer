@@ -21,17 +21,19 @@ describe ExcelInventory, type: :model do
     end
 
     it 'should correctly load standard Hobbs pricing file into the Pricing model' do
-      # first row with a define major price in the standard Hobbs pricing file
-      expect(pricing.get('LIG165', 'Hobbs', 'WESTEX')).to eq(102.85)
-       # last row with a defined major price in the standard Hobbs pricing file
-      expect(pricing.get('CLA516', 'Hobbs', 'WESTEX')).to eq(3.51)
+      # first row with non-zero price in the Hobbs pricing file
+      expect(pricing.get('14ST300', 'Hobbs', 'WESTEX')).to eq(28.30)
+      # first row with a defined major price in the Hobbs pricing file
+      expect(pricing.get('LIG165', 'Hobbs', 'WESTEX')).to eq(121)
+      # last row in the Hobbs pricing file
+      expect(pricing.get('14LBT1144', 'Hobbs', 'WESTEX')).to eq(72)
     end
 
     it 'should correctly load corporate Hobbs pricing file into the Pricing model' do
-      # first row in the Hobbs corporate pricing file
-      expect(pricing.get('1280BT190', 'Hobbs', '50CHEVHOBB')).to eq(99.18)
-      # last row in the Hobbs corporate pricing file
-      expect(pricing.get('1TR690', 'Hobbs', '50CHEVRONE')).to eq(15.68)
+      # first row with a defined major price in the Hobbs pricing file
+      expect(pricing.get('LIG165', 'Hobbs', 'CHEVRON')).to eq(102.85)
+      # last row with a defined major price in the Hobbs pricing file
+      expect(pricing.get('CLA516', 'Hobbs', 'CHEVRON')).to eq(3.51)
     end
   end
 end

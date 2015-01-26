@@ -18,28 +18,28 @@ class ExcelInventory
   end
 
   def load_hobbs_pricing
-    load_branch_pricing("data/Hobbs Items with Pricing Columns and Major Pricing.csv", "Hobbs", 14)
-    load_corporate_pricing("data/Hobbs Contract Pricing.xlsx", "Hobbs", 7)
+    # Hobbs uses "TSP pricing" (which corresponds to the third pricing column)
+    # for most of its clients except Chevron. For Chevron they use "Major" pricing
+    # which is from additional column in the CSV file.
+    load_branch_pricing("data/Hobbs Items with Pricing Columns and Major Pricing.csv", "Hobbs", 13)
+    load_corporate_pricing_for_specific_customer("data/Hobbs Items with Pricing Columns and Major Pricing.csv", "Hobbs", "CHEVRON", 14)
   end
 
   def load_branch_pricing(file, branch, price_column_index)
     extract_data(file).each do |row|
-      product_code = row[0]
-      price = row[price_column_index]
-      if price.present? && price.to_f > 0
-        @pricing.set_branch(product_code, branch, price)
-      end
+      try_setting_price(branch: branch, code: row[0], price: row[price_column_index])
+    end
+  end
+
+  def load_corporate_pricing_for_specific_customer(file, branch, customer, price_column_index)
+    extract_data(file).each do |row|
+      try_setting_price(branch: branch, customer: customer, code: row[0], price: row[price_column_index])
     end
   end
 
   def load_corporate_pricing(file, branch, price_column_index)
     extract_data(file).each do |row|
-      customer = row[0]
-      product_code = row[2]
-      price = row[price_column_index]
-      if price.present? && price.to_f > 0
-        @pricing.set_corporate(product_code, branch, customer, price)
-      end
+      try_setting_price(branch: branch, customer: row[0], code: row[2], price: row[price_column_index])
     end
   end
 
@@ -60,5 +60,14 @@ class ExcelInventory
 
   def extract_csv(file)
     CSV.read(file)[1..-1]
+  end
+
+  def try_setting_price(code:, branch:, price:, customer: nil)
+    return if price.blank? || price.to_f <= 0
+    if customer
+      @pricing.set_corporate(code, branch, customer, price)
+    else
+      @pricing.set_branch(code, branch, price)
+    end
   end
 end
