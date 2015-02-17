@@ -38,7 +38,7 @@ class Invoice
 
       pdf.text "Invoice No: 0001", align: :left
       pdf.text "Customer No: 0001", align: :left
-      pdf.text "Name: Taylor Swift", align: :left
+      pdf.text "Name: #{customer}", align: :left
       pdf.text "Location: Somewhere, TX", align: :left
 
       pdf.text "Work Description:", align: :left
