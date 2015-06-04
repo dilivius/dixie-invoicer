@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe ApiController, type: :controller do
   describe 'invoice' do
     it 'should return the PDF invoice file with proper name' do
-      make_session_active
+      make_session_active("invoicer-show")
       post :invoice, job: {common_id: 'abcd'}.to_json
       expect(response).to be_ok
       expect(response.body[0..7]).to eq("%PDF-1.4")
@@ -12,14 +12,14 @@ RSpec.describe ApiController, type: :controller do
     end
 
     it "should not allow to be used by normal users" do
-      make_session_active("user")
+      make_session_active("jobs-show")
       post :invoice, job: {common_id: 'abcd', performed_at: 1234567890000, company_name: 'Chevron'}.to_json
       expect(response.status).to eq(401)
       expect(response.body).to be_blank
     end
   end
 
-  def make_session_active(role="admin")
+  def make_session_active(role)
     session[:current_user] = {
       "username" => "homer",
       "roles" => [role],

@@ -2,7 +2,7 @@ class ApiController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   before_action do
-    require_role("admin")
+    require_role("invoicer-show")
   end
 
   def invoice
