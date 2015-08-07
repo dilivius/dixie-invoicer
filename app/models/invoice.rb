@@ -36,10 +36,10 @@ class Invoice
     pdf.grid([0,0], [1,1]).bounding_box do
       pdf.image image("dixie-electric-logo.png"), at: [170,160], width: 200
 
-      pdf.text "Invoice No: 0001", align: :left
-      pdf.text "Customer No: 0001", align: :left
+      pdf.text "Invoice No: __________", align: :left
+      pdf.text "Customer No: __________", align: :left
       pdf.text "Name: #{customer}", align: :left
-      pdf.text "Location: Somewhere, TX", align: :left
+      pdf.text "Location: __________", align: :left
 
       pdf.text "Work Description:", align: :left
       pdf.move_down 10
@@ -53,12 +53,12 @@ class Invoice
   def job_number_and_dates(pdf)
     pdf.grid([0,3.6], [1,4]).bounding_box do
       pdf.move_down 10
-      pdf.text "Job No: #{@job['common_id']}", align: :left
+      pdf.text "Job No:  __________", align: :left
       pdf.text "Date: #{performed_date}", align: :left
       pdf.text "No:", align: :left
       pdf.text "No:", align: :left
-      pdf.text "Start:", align: :left
-      pdf.text "Stop:", align: :left
+      pdf.text "Start: #{start_time}", align: :left
+      pdf.text "Stop: #{end_time}", align: :left
       pdf.text "Start:", align: :left
       pdf.text "Stop:", align: :left
     end
@@ -85,6 +85,24 @@ class Invoice
 
   def image(name)
     Rails.root.join("app/assets/images/pdf/#{name}")
+  end
+
+  def start_time
+    if time = @job['performed_at']
+      format_time(Time.at(time/1000))
+    end
+  end
+
+  def end_time
+    if time = @job['performed_at']
+      format_time(Time.at((time + @job['duration_in_milliseconds'].to_i)/1000))
+    end
+  end
+
+  DEFAULT_TIMEZONE = 'Central Time (US & Canada)'
+
+  def format_time(time)
+    time.in_time_zone(DEFAULT_TIMEZONE).strftime("%l-%M %p %Z").lstrip
   end
 
   def performed_date
