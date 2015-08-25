@@ -8,6 +8,7 @@ class ExcelInventory
   def load
     load_lk_pricing
     load_hobbs_pricing
+    load_dei_pricing
   end
 
   private
@@ -23,6 +24,50 @@ class ExcelInventory
     # which is from additional column in the CSV file.
     load_branch_pricing("data/Hobbs Items with Pricing Columns and Major Pricing.csv", "Hobbs", 13)
     load_corporate_pricing_for_specific_customer("data/Hobbs Items with Pricing Columns and Major Pricing.csv", "Hobbs", "CHEVRON", 14)
+  end
+
+  def load_dei_pricing
+    customer_groups = load_dei_customer_pricing_groups("data/DEI Customer Price Columns.xlsx")
+    load_dei_branch_pricing("data/DEI Item Pricing.xlsx", customer_groups)
+    load_corporate_pricing("data/DEI Contract Pricing.xlsx", "DEI", 5)
+  end
+
+  def load_dei_customer_pricing_groups(file)
+    customer_groups = {}
+    extract_data(file).each do |row|
+      if row[0] == 'DEI'
+        customer_code = row[1]
+        pricing_group = row[2] || row[3] # row[2] is MAJOR8/CHTX/nil, while row[3] is a number
+        customer_groups[customer_code] = pricing_group
+      end
+    end
+    customer_groups
+  end
+
+  def load_dei_branch_pricing(file, customer_groups)
+    extract_data(file).each do |row|
+      customer_groups.each_pair do |customer, pricing_group|
+        try_setting_price(branch: "DEI",
+                          customer: customer,
+                          code: row[0],
+                          price: row[dei_pricing_group_to_column(pricing_group)])
+      end
+    end
+  end
+
+  def dei_pricing_group_to_column(group)
+    {
+      '1' => 5,
+      '2' => 6,
+      '3' => 7,
+      '4' => 8,
+      '5' => 9,
+      '6' => 10,
+      '7' => 11,
+      '8' => 12,
+      'CHTX' => 15,
+      'MAJOR8' => 16,
+    }.fetch(group)
   end
 
   def load_branch_pricing(file, branch, price_column_index)
