@@ -69,12 +69,14 @@ class Invoice
     items = []
     items << ["Stock No.", "Quantity", "Description", "Rate", "Subtotal"]
     items.concat(product_lines)
-    items << ["", total_quantity.to_s, "", "", "%.2f" % total_price]
+    items << ["Total", total_quantity.to_s, "", "", "%.2f" % total_price]
 
     pdf.table items, header: true, column_widths: { 0 => 60, 1 => 60, 2 => 300, 3 => 60, 4 => 60, 5 => 60}, row_colors: ["d2e3ed", "FFFFFF"] do
       style(columns(1)) {|x| x.align = :right }
       style(columns(3)) {|x| x.align = :right }
       style(columns(4)) {|x| x.align = :right }
+      row(0).font_style = :bold
+      row(-1).font_style = :bold
     end
   end
 
